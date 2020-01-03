@@ -1,13 +1,14 @@
 import React, { Fragment } from 'react';
+import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { deleteEducation } from '../../redux/actions/profile';
 
-const Education = ({ education, deleteEducation }) => {
+const Education = ({ education, deleteEducation, history }) => {
   const educations = education.map(edu => (
-    <tr key={edu._id}>
+    <tr className='tr-style' key={edu._id} onClick={() => history.push(`/education/edit/${edu._id}`)}>
       <td>{edu.school}</td>
       <td className="hide-sm">{edu.degree}</td>
       <td>
@@ -17,14 +18,6 @@ const Education = ({ education, deleteEducation }) => {
         ) : (
           <Moment format="YYYY/MM/DD">{moment.utc(edu.to)}</Moment>
         )}
-      </td>
-      <td>
-        <button
-          onClick={() => deleteEducation(edu._id)}
-          className="btn btn-danger"
-        >
-          Delete
-        </button>
       </td>
     </tr>
   ));
@@ -38,11 +31,13 @@ const Education = ({ education, deleteEducation }) => {
             <th>School</th>
             <th className="hide-sm">Degree</th>
             <th className="hide-sm">Years</th>
-            <th />
           </tr>
         </thead>
         <tbody>{educations}</tbody>
       </table>
+      <Link to='/education/add' className='btn btn-light'>
+        <i className='fas fa-graduation-cap text-primary' /> Add Education
+      </Link>
     </Fragment>
   );
 };
@@ -55,4 +50,4 @@ Education.propTypes = {
 export default connect(
   null,
   { deleteEducation }
-)(Education);
+)(withRouter(Education));

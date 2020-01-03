@@ -8,6 +8,7 @@ import CreateProfile from '../profile-forms/CreateProfile';
 import EditProfile from '../profile-forms/EditProfile';
 import AddExperience from '../profile-forms/AddExperience';
 import AddEducation from '../profile-forms/AddEducation';
+import EditEducation from '../profile-forms/EditEducation';
 import Profiles from '../profiles/Profiles';
 import Profile from '../profile/Profile';
 import Posts from '../posts/Posts';
@@ -25,10 +26,11 @@ const Routes = () => {
         <Route exact path='/profiles' component={Profiles} />
         <Route exact path='/profile/:id' component={Profile} />
         <PrivateRoute exact path='/dashboard' component={Dashboard} />
-        <PrivateRoute exact path='/create-profile' component={CreateProfile} />
-        <PrivateRoute exact path='/edit-profile' component={EditProfile} />
-        <PrivateRoute exact path='/add-experience' component={AddExperience} />
-        <PrivateRoute exact path='/add-education' component={AddEducation} />
+        <PrivateRoute exact path='/profile/create' component={CreateProfile} />
+        <PrivateRoute exact path='/profile/edit' component={EditProfile} />
+        <PrivateRoute exact path='/experience/add' component={AddExperience} />
+        <PrivateRoute exact path='/education/add' component={AddEducation} />
+        <PrivateRoute exact path='/education/edit/:id' component={EditEducation} />
         <PrivateRoute exact path='/posts' component={Posts} />
         <PrivateRoute exact path='/posts/:id' component={Post} />
         <Route component={NotFound} />

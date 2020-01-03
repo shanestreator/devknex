@@ -1,8 +1,11 @@
 const express = require('express');
 const connectDB = require('./config/db');
 const path = require('path');
+const volleyball = require('volleyball')
 
 const app = express();
+
+app.use(volleyball)
 
 connectDB();
 

@@ -488,6 +488,11 @@ button {
   margin-bottom: 0.5rem;
 }
 
+.tr-style:hover {
+  cursor: pointer;
+  background-color: lightgray;
+}
+
 /* Mobile Styles */
 @media (max-width: 700px) {
   .container {

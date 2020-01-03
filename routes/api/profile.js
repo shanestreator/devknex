@@ -271,18 +271,10 @@ router.put(
   [
     auth,
     [
-      check('school', 'School is required')
-        .not()
-        .isEmpty(),
-      check('degree', 'Degree is required')
-        .not()
-        .isEmpty(),
-      check('fieldofstudy', 'Field of study is required')
-        .not()
-        .isEmpty(),
-      check('from', 'From date is required')
-        .not()
-        .isEmpty()
+      check('school', 'School is required').not().isEmpty(),
+      check('degree', 'Degree is required').not().isEmpty(),
+      check('fieldofstudy', 'Field of study is required').not().isEmpty(),
+      check('from', 'From date is required').not().isEmpty()
     ]
   ],
   async (req, res) => {
@@ -292,6 +284,7 @@ router.put(
     }
 
     const {
+      id,
       school,
       degree,
       fieldofstudy,
@@ -300,7 +293,7 @@ router.put(
       current,
       description
     } = req.body;
-
+    
     const newEdu = {
       school,
       degree,
@@ -313,12 +306,30 @@ router.put(
 
     try {
       const profile = await Profile.findOne({ user: req.user.id });
+      // Update education
+      if (id) {
+        profile.education.map(el => {
+          if (el._id == id) {
+            el.school = school,
+            el.current = degree,
+            el.fieldofstudy = fieldofstudy,
+            el.from = from,
+            el.to = to,
+            el.current = current,
+            el.description = description
+            return el
+          }
+        })
+        await profile.save();
+        res.status(202).json(profile);
+      }
+      // Create education
+      else {
+        profile.education.unshift(newEdu);
 
-      profile.education.unshift(newEdu);
-
-      await profile.save();
-
-      res.json(profile);
+        await profile.save();
+        res.json(profile);
+      }
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');

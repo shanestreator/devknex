@@ -1,11 +1,20 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { Link, withRouter } from 'react-router-dom';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { addEducation } from '../../redux/actions/profile';
+import { getCurrentProfile, addEducation, deleteEducation } from '../../redux/actions/profile';
 
-const AddEducation = ({ addEducation, history }) => {
+const EditEducation = ({
+  profile: { profile, loading },
+  deleteEducation,
+  addEducation,
+  getCurrentProfile,
+  history,
+  match
+}) => {
   const [formData, setFormData] = useState({
+    id: '',
     school: '',
     degree: '',
     fieldofstudy: '',
@@ -17,7 +26,28 @@ const AddEducation = ({ addEducation, history }) => {
 
   const [toDateDisabled, toggleDisabled] = useState(false);
 
+  useEffect(() => {
+    getCurrentProfile();
+
+    if (profile) {
+      const edu = profile.education.find(el => el._id === match.params.id)
+
+      setFormData({
+        id: edu._id,
+        school: edu.school,
+        degree: edu.degree,
+        fieldofstudy: edu.fieldofstudy,
+        from: edu.from,
+        to: edu.to,
+        current: edu.current,
+        description: edu.description
+      })
+    }
+
+  }, [loading]);
+  
   const {
+    id,
     school,
     degree,
     fieldofstudy,
@@ -32,7 +62,7 @@ const AddEducation = ({ addEducation, history }) => {
 
   return (
     <Fragment>
-      <h1 className='large text-primary'>Add Your Education</h1>
+      <h1 className='large text-primary'>Edit Your Education</h1>
       <p className='lead'>
         <i className='fas fa-code-branch' /> Add any school or bootcamp that you
         have attended
@@ -42,7 +72,7 @@ const AddEducation = ({ addEducation, history }) => {
         className='form'
         onSubmit={e => {
           e.preventDefault();
-          addEducation(formData, history);
+          addEducation(formData, history, id);
         }}
       >
         <div className='form-group'>
@@ -79,7 +109,7 @@ const AddEducation = ({ addEducation, history }) => {
           <input
             type='date'
             name='from'
-            value={from}
+            value={moment(from).format('YYYY-MM-DD')}
             onChange={e => onChange(e)}
           />
         </div>
@@ -103,7 +133,7 @@ const AddEducation = ({ addEducation, history }) => {
           <input
             type='date'
             name='to'
-            value={to}
+            value={moment(to).format('YYYY-MM-DD')}
             onChange={e => onChange(e)}
             disabled={toDateDisabled ? 'disabled' : ''}
           />
@@ -118,20 +148,35 @@ const AddEducation = ({ addEducation, history }) => {
             onChange={e => onChange(e)}
           />
         </div>
-        <input type='submit' className='btn btn-primary my-1' />
-        <Link className='btn btn-light my-1' to='/dashboard'>
-          Go Back
-        </Link>
+        <div className="edit-button">
+          <input type='submit' className='btn btn-primary my-1' />
+          <Link className='btn btn-light my-1' to='/dashboard'>
+            Go Back
+          </Link>
+          <button
+            type='button'
+            onClick={() => deleteEducation(id, history)}
+            className="btn btn-danger"
+          >
+            Delete
+          </button>
+        </div>
       </form>
     </Fragment>
   );
 };
 
-AddEducation.propTypes = {
-  addEducation: PropTypes.func.isRequired
+EditEducation.propTypes = {
+  getCurrentProfile: PropTypes.func.isRequired,
+  addEducation: PropTypes.func.isRequired,
+  profile: PropTypes.object.isRequired
 };
 
+const mapStateToProps = state => ({
+  profile: state.profile
+});
+
 export default connect(
-  null,
-  { addEducation }
-)(withRouter(AddEducation));
+  mapStateToProps,
+  { getCurrentProfile, addEducation, deleteEducation }
+)(withRouter(EditEducation));
