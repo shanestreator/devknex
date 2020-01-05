@@ -15,15 +15,11 @@
 ## Quick Start
 
 ```
-# add config/default.json to .gitignore
-
-# change default.json file in config folder
-
-# this file is located in config/default.json
+# add .env to .gitignore
 
 # add uri of your mongodb connection for example
 
- "mongoURI": "mongodb://localhost/dev-social",
+ "MONGODB_URI": "mongodb://localhost/dev-social",
  
 ```
 
