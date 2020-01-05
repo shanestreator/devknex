@@ -74,7 +74,7 @@ router.post(
     if (location) profileFields.location = location;
     if (bio) profileFields.bio = bio;
     if (status) profileFields.status = status;
-    if (githubusername) profileFields.githubusername = githubusername;
+    if (githubusername || githubusername === '') profileFields.githubusername = githubusername;
     if (skills) {
       profileFields.skills = skills.split(',').map(skill => skill.trim());
     }
@@ -428,7 +428,7 @@ router.get('/github/:username', (req, res) => {
 
     request(options, (error, response, body) => {
       if (error) console.error(error);
-
+      console.log('response: ', response)
       if (response.statusCode !== 200) {
         return res.status(404).json({ msg: 'No Github profile found' });
       }
