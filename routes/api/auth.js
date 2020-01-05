@@ -60,7 +60,7 @@ router.post(
           id: user.id
         }
       };
-
+      console.log('secret: ', config.get('jwtSecret'))
       jwt.sign(
         payload,
         config.get('jwtSecret'),

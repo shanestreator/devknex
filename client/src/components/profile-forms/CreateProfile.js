@@ -1,15 +1,10 @@
-import React, { useEffect, useState, Fragment } from 'react';
-import { Link, withRouter, Redirect } from 'react-router-dom';
+import React, { Fragment, useState } from 'react';
+import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { createProfile, getCurrentProfile } from '../../redux/actions/profile';
+import { createProfile } from '../../redux/actions/profile';
 
-const CreateProfile = ({
-	createProfile,
-	getCurrentProfile,
-	profile: { profile, loading },
-	history
-}) => {
+const CreateProfile = ({ createProfile, history }) => {
 	const [formData, setFormData] = useState({
 		company: '',
 		website: '',
@@ -39,19 +34,16 @@ const CreateProfile = ({
 		youtube,
 		instagram
 	} = formData;
+
 	const onChange = e =>
 		setFormData({ ...formData, [e.target.name]: e.target.value });
+
 	const onSubmit = e => {
 		e.preventDefault();
 		createProfile(formData, history);
 	};
-	useEffect(() => {
-		getCurrentProfile();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [getCurrentProfile]);
-	return loading && profile === null ? (
-		<Redirect to='/dashboard' />
-	) : (
+
+	return (
 		<Fragment>
 			<h1 className='large text-primary'>Create Your Profile</h1>
 			<p className='lead'>
@@ -67,8 +59,8 @@ const CreateProfile = ({
 						<option value='Junior Developer'>Junior Developer</option>
 						<option value='Senior Developer'>Senior Developer</option>
 						<option value='Manager'>Manager</option>
-						<option value='Student or Learning'>Student or Learning</option>
-						<option value='Instructor'>Instructor or Teacher</option>
+            <option value='Student'>Student</option>
+            <option value='Instructor'>Teacher</option>
 						<option value='Intern'>Intern</option>
 						<option value='Other'>Other</option>
 					</select>
@@ -97,7 +89,7 @@ const CreateProfile = ({
 						onChange={e => onChange(e)}
 					/>
 					<small className='form-text'>
-						Could be your own or a company website
+            Please input complete url (eg: https://abc.com)
 					</small>
 				</div>
 				<div className='form-group'>
@@ -109,7 +101,7 @@ const CreateProfile = ({
 						onChange={e => onChange(e)}
 					/>
 					<small className='form-text'>
-						City & state suggested (eg. Boston, MA)
+            City & State (eg. Chicago, IL)
 					</small>
 				</div>
 				<div className='form-group'>
@@ -121,7 +113,7 @@ const CreateProfile = ({
 						onChange={e => onChange(e)}
 					/>
 					<small className='form-text'>
-						Please use comma separated values (eg. HTML,CSS,JavaScript,PHP)
+            Please use comma separated values (eg. HTML,CSS,JavaScript)
 					</small>
 				</div>
 				<div className='form-group'>
@@ -222,17 +214,14 @@ const CreateProfile = ({
 				</Link>
 			</form>
 		</Fragment>
-	);
+  );
 };
 
 CreateProfile.propTypes = {
-	createProfile: PropTypes.func.isRequired,
-	getCurrentProfile: PropTypes.func.isRequired,
-	profile: PropTypes.object.isRequired
+  createProfile: PropTypes.func.isRequired
 };
-const mapStateToProps = state => ({
-	profile: state.profile
-});
-export default connect(mapStateToProps, { createProfile, getCurrentProfile })(
-	withRouter(CreateProfile)
-);
+
+export default connect(
+  null,
+  { createProfile }
+)(withRouter(CreateProfile));

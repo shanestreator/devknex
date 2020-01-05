@@ -7,30 +7,31 @@ import { connect } from 'react-redux';
 import { deleteEducation } from '../../redux/actions/profile';
 
 const Education = ({ education, deleteEducation, history }) => {
-  const educations = education.map(edu => (
+  const educations = education ? education.map(edu => (
     <tr className='tr-style' key={edu._id} onClick={() => history.push(`/education/edit/${edu._id}`)}>
       <td>{edu.school}</td>
-      <td className="hide-sm">{edu.degree}</td>
+      <td className="">{edu.degree}</td>
       <td>
-        <Moment format="YYYY/MM/DD">{moment.utc(edu.from)}</Moment> -{' '}
+        <Moment format="MM/DD/YYYY">{moment.utc(edu.from)}</Moment> -{' '}
         {edu.to === null ? (
           ' Now'
         ) : (
-          <Moment format="YYYY/MM/DD">{moment.utc(edu.to)}</Moment>
+          <Moment format="MM/DD/YYYY">{moment.utc(edu.to)}</Moment>
         )}
       </td>
     </tr>
-  ));
+  )) : null;
 
   return (
     <Fragment>
       <h2 className="my-2">Education Credentials</h2>
+      <small>* Click education row to edit or delete</small>
       <table className="table">
         <thead>
           <tr>
             <th>School</th>
-            <th className="hide-sm">Degree</th>
-            <th className="hide-sm">Years</th>
+            <th className="">Degree</th>
+            <th className="">Years</th>
           </tr>
         </thead>
         <tbody>{educations}</tbody>

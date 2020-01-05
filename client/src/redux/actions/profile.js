@@ -21,6 +21,7 @@ export const getCurrentProfile = () => async dispatch => {
       payload: res.data
     });
   } catch (err) {
+
     dispatch({
       type: PROFILE_ERROR,
       payload: { msg: err.response.statusText, status: err.response.status }
@@ -103,9 +104,7 @@ export const createProfile = (
 
     dispatch(setAlert(edit ? 'Profile Updated' : 'Profile Created', 'success'));
 
-    if (!edit) {
-      history.push('/dashboard');
-    }
+    history.push('/dashboard')
   } catch (err) {
     const errors = err.response.data.errors;
 
@@ -121,13 +120,14 @@ export const createProfile = (
 };
 
 // Add Experience
-export const addExperience = (formData, history) => async dispatch => {
+export const addExperience = (formData, history, id = null) => async dispatch => {
   try {
     const config = {
       headers: {
         'Content-Type': 'application/json'
       }
     };
+    if (id) formData.id = id
 
     const res = await axios.put('/api/profile/experience', formData, config);
 
@@ -136,7 +136,7 @@ export const addExperience = (formData, history) => async dispatch => {
       payload: res.data
     });
 
-    dispatch(setAlert('Experience Added', 'success'));
+    dispatch(setAlert(id ? 'Experience Updated' : 'Experience Added', 'success', 'success'));
 
     history.push('/dashboard');
   } catch (err) {
@@ -169,9 +169,9 @@ export const addEducation = (formData, history, id = null) => async dispatch => 
       type: UPDATE_PROFILE,
       payload: res.data
     });
-    dispatch(setAlert(id ? 'Education Updated' : 'Education Added', 'success'));
-
+    
     history.push('/dashboard');
+    dispatch(setAlert(id ? 'Education Updated' : 'Education Added', 'success'));
   } catch (err) {
     const errors = err.response.data.errors;
 
@@ -187,16 +187,21 @@ export const addEducation = (formData, history, id = null) => async dispatch => 
 };
 
 // Delete experience
-export const deleteExperience = id => async dispatch => {
+export const deleteExperience = (id, history) => async dispatch => {
   try {
-    const res = await axios.delete(`/api/profile/experience/${id}`);
+    if (!window.confirm('Are you sure you want to delete this?')) {
+      return history.push(`/experience/edit/${id}`);
+    }
 
+    const res = await axios.delete(`/api/profile/experience/${id}`);
     dispatch({
       type: UPDATE_PROFILE,
       payload: res.data
     });
 
+    history.push('/dashboard');
     dispatch(setAlert('Experience Removed', 'success'));
+
   } catch (err) {
     dispatch({
       type: PROFILE_ERROR,

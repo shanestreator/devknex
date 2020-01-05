@@ -16,6 +16,7 @@ const Profile = ({
   auth,
   match
 }) => {
+
   useEffect(() => {
     getProfileById(match.params.id);
   }, [getProfileById, match.params.id]);

@@ -89,14 +89,26 @@ router.post(
     if (instagram) profileFields.social.instagram = instagram;
 
     try {
-      // Using upsert option (creates new doc if no match is found):
-      let profile = await Profile.findOneAndUpdate(
-        { user: req.user.id },
-        { $set: profileFields },
-        { new: true, upsert: true }
-      );
+      let profile = await Profile.findOne({ user: req.user.id });
+
+      if (profile) {
+        // Update
+        profile = await Profile.findOneAndUpdate(
+          { user: req.user.id },
+          { $set: profileFields },
+          { new: true }
+        );
+
+        return res.json(profile);
+      }
+
+      // Create
+      profile = new Profile(profileFields);
+
+      await profile.save();
       res.json(profile);
-    } catch (err) {
+    }
+    catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
     }
@@ -164,15 +176,9 @@ router.put(
   [
     auth,
     [
-      check('title', 'Title is required')
-        .not()
-        .isEmpty(),
-      check('company', 'Company is required')
-        .not()
-        .isEmpty(),
-      check('from', 'From date is required')
-        .not()
-        .isEmpty()
+      check('title', 'Title is required').not().isEmpty(),
+      check('company', 'Company is required').not().isEmpty(),
+      check('from', 'From date is required').not().isEmpty()
     ]
   ],
   async (req, res) => {
@@ -182,6 +188,7 @@ router.put(
     }
 
     const {
+      id,
       title,
       company,
       location,
@@ -203,12 +210,32 @@ router.put(
 
     try {
       const profile = await Profile.findOne({ user: req.user.id });
+      // Update experience
+      if (id) {
+        profile.experience.map(el => {
+          if (el._id == id) {
+            el.title = title,
+            el.company = company,
+            el.location = location,
+            el.from = from,
+            el.to = to,
+            el.current = current,
+            el.description = description
+            return el
+          }
+        })
+        await profile.save();
+        res.status(202).json(profile);
+      }
+      // Create experience
+      else {
+        profile.experience.unshift(newExp);
 
-      profile.experience.unshift(newExp);
+        await profile.save();
+  
+        res.json(profile);
+      }
 
-      await profile.save();
-
-      res.json(profile);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');

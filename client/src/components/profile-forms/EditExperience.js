@@ -3,21 +3,21 @@ import { Link, withRouter } from 'react-router-dom';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getCurrentProfile, addEducation, deleteEducation } from '../../redux/actions/profile';
+import { getCurrentProfile, addExperience, deleteExperience } from '../../redux/actions/profile';
 
-const EditEducation = ({
+const EditExperience = ({
   profile: { profile, loading },
-  deleteEducation,
-  addEducation,
+  deleteExperience,
+  addExperience,
   getCurrentProfile,
   history,
   match
 }) => {
   const [formData, setFormData] = useState({
     id: '',
-    school: '',
-    degree: '',
-    fieldofstudy: '',
+    company: '',
+    title: '',
+    location: '',
     from: '',
     to: '',
     current: false,
@@ -30,57 +30,48 @@ const EditEducation = ({
     getCurrentProfile();
 
     if (profile) {
-      const edu = profile.education.find(el => el._id === match.params.id)
+      const exp = profile.experience.find(el => el._id === match.params.id)
 
       setFormData({
-        id: edu._id,
-        school: edu.school,
-        degree: edu.degree,
-        fieldofstudy: edu.fieldofstudy,
-        from: edu.from,
-        to: edu.to,
-        current: edu.current,
-        description: edu.description
+        id: exp._id,
+        company: exp.company,
+        title: exp.title,
+        location: exp.location,
+        from: exp.from,
+        to: exp.to,
+        current: exp.current,
+        description: exp.description
       })
     }
 
   }, [loading]);
-  
-  const {
-    id,
-    school,
-    degree,
-    fieldofstudy,
-    from,
-    to,
-    current,
-    description
-  } = formData;
+
+  const { id, company, title, location, from, to, current, description } = formData;
 
   const onChange = e =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   return (
     <Fragment>
-      <h1 className='large text-primary'>Edit Education</h1>
+      <h1 className='large text-primary'>Edit Experience</h1>
       <p className='lead'>
-        <i className='fas fa-code-branch' /> Add any school or bootcamp that you
-        have attended
+        <i className='fas fa-code-branch' /> Add any developer/programming positions
+        that you have had in the past
       </p>
       <small>* = required field</small>
       <form
         className='form'
         onSubmit={e => {
           e.preventDefault();
-          addEducation(formData, history, id);
+          addExperience(formData, history);
         }}
       >
         <div className='form-group'>
           <input
             type='text'
-            placeholder='* School or Bootcamp'
-            name='school'
-            value={school}
+            placeholder='* Job Title'
+            name='title'
+            value={title}
             onChange={e => onChange(e)}
             required
           />
@@ -88,9 +79,9 @@ const EditEducation = ({
         <div className='form-group'>
           <input
             type='text'
-            placeholder='* Degree or Certificate'
-            name='degree'
-            value={degree}
+            placeholder='* Company'
+            name='company'
+            value={company}
             onChange={e => onChange(e)}
             required
           />
@@ -98,9 +89,9 @@ const EditEducation = ({
         <div className='form-group'>
           <input
             type='text'
-            placeholder='* Field of Study'
-            name='fieldofstudy'
-            value={fieldofstudy}
+            placeholder='Location'
+            name='location'
+            value={location}
             onChange={e => onChange(e)}
           />
         </div>
@@ -125,7 +116,7 @@ const EditEducation = ({
                 toggleDisabled(!toDateDisabled);
               }}
             />{' '}
-            Current School
+            Current Job
           </p>
         </div>
         <div className='form-group'>
@@ -143,7 +134,7 @@ const EditEducation = ({
             name='description'
             cols='30'
             rows='5'
-            placeholder='Program Description'
+            placeholder='Job Description'
             value={description}
             onChange={e => onChange(e)}
           />
@@ -155,7 +146,7 @@ const EditEducation = ({
           </Link>
           <button
             type='button'
-            onClick={() => deleteEducation(id, history)}
+            onClick={() => deleteExperience(id, history)}
             className="btn btn-danger"
           >
             Delete
@@ -166,10 +157,10 @@ const EditEducation = ({
   );
 };
 
-EditEducation.propTypes = {
+EditExperience.propTypes = {
   getCurrentProfile: PropTypes.func.isRequired,
-  addEducation: PropTypes.func.isRequired,
-  deleteEducation: PropTypes.func.isRequired,
+  addExperience: PropTypes.func.isRequired,
+  deleteExperience: PropTypes.func.isRequired,
   profile: PropTypes.object.isRequired
 };
 
@@ -179,5 +170,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getCurrentProfile, addEducation, deleteEducation }
-)(withRouter(EditEducation));
+  { getCurrentProfile, addExperience, deleteExperience }
+)(withRouter(EditExperience));
